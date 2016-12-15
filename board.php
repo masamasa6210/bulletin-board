@@ -1,35 +1,29 @@
 <?php
 require_once 'C:\xampp\htdocs\php_data\DbManager.php';
+require_once 'C:\xampp\htdocs\php_data\MyValidator.php';
 
 date_default_timezone_set('Asia/Tokyo');
 
-$dataFile ='bbs.txt';
 
-if(isset($_POST['toukou'])){	
+if(isset($_POST['toukou'])){
+
+	$v = new MyValidator();
+	$v->requiredCheck($_POST['name'], '名前');
+	$v->requiredCheck($_POST['contents'], 'メッセージ');
+	$v->lengthCheck($_POST['name'], '名前', 20);
+	$v->requiredCheck($_POST['contents'], 'メッセージ', 50);
+
 	$name = htmlspecialchars($_POST['name']);
 	$contents = htmlspecialchars($_POST['contents']);
 	$postedAt = date('Y-m-d H:i:s');
+
+	$dataFile ='bbs.txt';
+	$newData = (sizeof(file($dataFile)) + 1)." ".$name." ".$contents." ".$postedAt. "\n";
+
+	$fp = fopen($dataFile,'a');
+	fwrite($fp, $newData);
+	fclose($fp);
 	
-	if(strlen($name) > 20 or strlen($contents) > 50 ){
-		
-		print "文字数が多すぎます";
-		echo '<br>';
-		echo '<a href="#" onclick="history.back(); return false;">前の画面に戻る</a>';
-		exit;
-	}
-
-	if(!empty($_POST['name']) && !empty($_POST['contents'])){
-		$newData = (sizeof(file($dataFile)) + 1)." ".$name." ".$contents." ".$postedAt. "\n";
-
-		$fp = fopen($dataFile,'a');
-	    fwrite($fp, $newData);
-	    fclose($fp);
-	}else{
-		print '値を入れてください';
-		echo '<br>';
-		echo '<a href="#" onclick="history.back(); return false;">前の画面に戻る</a>';
-		exit;
-	}
 }
 
 	try {
