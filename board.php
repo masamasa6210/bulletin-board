@@ -1,6 +1,6 @@
 <?php
-require_once 'C:\xampp\htdocs\php_data\DbManager.php';
-require_once 'C:\xampp\htdocs\php_data\MyValidator.php';
+require_once 'DbManager.php';
+require_once 'MyValidator.php';
 
 date_default_timezone_set('Asia/Tokyo');
 
@@ -11,7 +11,7 @@ if(isset($_POST['toukou'])){
 	$v->requiredCheck($_POST['name'], '名前');
 	$v->requiredCheck($_POST['contents'], 'メッセージ');
 	$v->lengthCheck($_POST['name'], '名前', 20);
-	$v->requiredCheck($_POST['contents'], 'メッセージ', 50);
+	$v->lengthCheck($_POST['contents'], 'メッセージ', 50);
 
 	$name = htmlspecialchars($_POST['name']);
 	$contents = htmlspecialchars($_POST['contents']);
@@ -29,7 +29,7 @@ if(isset($_POST['toukou'])){
 	try {
 	$db = getDb();
 		
-	$stt = $db->prepare('INSERT INTO bulletin(name, contents) VALUES(:name, :contents)');
+	$stt = $db->prepare('INSERT INTO post(name, contents) VALUES(:name, :contents)');
 		
 	$stt->bindParam(':name', $_POST['name']);
 	$stt->bindParam(':contents', $_POST['contents']);
@@ -61,7 +61,7 @@ if(isset($_POST['toukou'])){
     </form>
 
 <?php
-     
+    $dataFile ='bbs.txt';
     $file=file($dataFile); // ファイルの内容を配列に格納
     foreach( $file as $value ){
     $line = explode(" ",$value);

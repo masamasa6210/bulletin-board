@@ -1,5 +1,5 @@
 <?php
-require_once 'C:\xampp\htdocs\php_data\DbManager.php';
+require_once 'DbManager.php';
 
 class MyValidator {
 	public $_errors;
@@ -18,6 +18,7 @@ class MyValidator {
 	}
 
 	public function lengthCheck($value, $name, $len) {
+		var_dump($value);
 		if(trim($value) !== ''){
 			if(mb_strlen($value) > $len){
 				echo $this->_errors[] = "{$name}は{$len}文字以内で入力してください。";
