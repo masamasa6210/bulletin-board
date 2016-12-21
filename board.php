@@ -15,20 +15,11 @@ if(isset($_POST['toukou'])){
 
 	$name = htmlspecialchars($_POST['name']);
 	$contents = htmlspecialchars($_POST['contents']);
-	$postedAt = date('Y-m-d H:i:s');
-
-	$dataFile ='bbs.txt';
-	$newData = (sizeof(file($dataFile)) + 1)." ".$name." ".$contents." ".$postedAt. "\n";
-
-	$fp = fopen($dataFile,'a');
-	fwrite($fp, $newData);
-	fclose($fp);
-	
-}
+	}
 
 	try {
 	$db = getDb();
-		
+	
 	$stt = $db->prepare('INSERT INTO post(name, contents) VALUES(:name, :contents)');
 		
 	$stt->bindParam(':name', $_POST['name']);
@@ -44,30 +35,38 @@ if(isset($_POST['toukou'])){
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-    <meta charset="utf-8">
+	<meta charset="utf-8">
 	<title>簡易掲示板</title>
 </head>
 <body>
 	<h1>簡易掲示板</h1></br>
 	<p>名前は20文字以内、メッセージは50文字以内で入力してください</p>
 
-    <form action="" method="POST">
-     	
+	<form action="" method="POST">
+
 	名前:<input type="text" name="name">
 	メッセージ:<input type="text" name="contents">
 
-    <input type="submit" name='toukou'　value="投稿"></br></br>
+	<input type="submit" name='toukou'　value="投稿"></br></br>
 
-    </form>
+	</form>
 
 <?php
-    $dataFile ='bbs.txt';
-    $file=file($dataFile); // ファイルの内容を配列に格納
-    foreach( $file as $value ){
-    $line = explode(" ",$value);
-    echo $value."<br />\n"; // 改行しながら値を表示
-	}
+try{
+	$db = getDb();
+	$stt = $db->query('SELECT * FROM post ORDER BY id DESC');
+	$stt->execute();
+	$post_list = $stt->fetchAll();
+	foreach ($post_list as $row){
+			echo $row["id"]." ".$row["name"]." ".$row["contents"];
+			echo '<br>';}
+	$db = null;
+	}catch(PDOException $e) {
+		die("エラーメッセージ:{$e->getMessage()}");
+}
+	
+		
+	
 ?>
 </body>
 </html>
-
