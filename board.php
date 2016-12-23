@@ -15,8 +15,7 @@ if(isset($_POST['toukou'])){
 
 	$name = htmlspecialchars($_POST['name']);
 	$contents = htmlspecialchars($_POST['contents']);
-	}
-
+	
 	try {
 	$db = getDb();
 	
@@ -29,6 +28,7 @@ if(isset($_POST['toukou'])){
 	
 	} catch(PDOException $e) {
 	die("エラーメッセージ:{$e->getMessage()}");
+	}
 }
 
 ?>
