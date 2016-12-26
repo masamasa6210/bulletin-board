@@ -12,18 +12,17 @@ class MyValidator {
 		if(trim($value) === ''){
 			echo $this->_errors[] = "{$name}は必須入力です。";
 			echo '<br>';
-	        echo '<a href="#" onclick="history.back(); return false;">前の画面に戻る</a>';
+			echo '<a href="#" onclick="history.back(); return false;">前の画面に戻る</a>';
 			exit;
 		}
 	}
 
 	public function lengthCheck($value, $name, $len) {
-		var_dump($value);
 		if(trim($value) !== ''){
 			if(mb_strlen($value) > $len){
 				echo $this->_errors[] = "{$name}は{$len}文字以内で入力してください。";
 				echo '<br>';
-	            echo '<a href="#" onclick="history.back(); return false;">前の画面に戻る</a>';
+				echo '<a href="#" onclick="history.back(); return false;">前の画面に戻る</a>';
 				exit;
 			}
 		}

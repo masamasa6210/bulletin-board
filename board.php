@@ -2,11 +2,7 @@
 require_once 'DbManager.php';
 require_once 'MyValidator.php';
 
-date_default_timezone_set('Asia/Tokyo');
-
-
 if(isset($_POST['toukou'])){
-
 	$v = new MyValidator();
 	$v->requiredCheck($_POST['name'], '名前');
 	$v->requiredCheck($_POST['contents'], 'メッセージ');
@@ -17,17 +13,17 @@ if(isset($_POST['toukou'])){
 	$contents = htmlspecialchars($_POST['contents']);
 	
 	try {
-	$db = getDb();
-	
-	$stt = $db->prepare('INSERT INTO post(name, contents) VALUES(:name, :contents)');
+		$db = getDb();
 		
-	$stt->bindParam(':name', $_POST['name']);
-	$stt->bindParam(':contents', $_POST['contents']);
-	$stt->execute();
-	$db = NULL;
-	
+		$stt = $db->prepare('INSERT INTO post(name, contents) VALUES(:name, :contents)');
+		
+		$stt->bindParam(':name', $_POST['name']);
+		$stt->bindParam(':contents', $_POST['contents']);
+		$stt->execute();
+		$db = NULL;
+
 	} catch(PDOException $e) {
-	die("エラーメッセージ:{$e->getMessage()}");
+		die("エラーメッセージ:{$e->getMessage()}");
 	}
 }
 
@@ -58,15 +54,14 @@ try{
 	$stt->execute();
 	$post_list = $stt->fetchAll();
 	foreach ($post_list as $row){
-			echo $row["id"]." ".$row["name"]." ".$row["contents"];
-			echo '<br>';}
+		echo $row["id"]." ".$row["name"]." ".$row["contents"];
+		echo '<br>';
+		}
 	$db = null;
-	}catch(PDOException $e) {
-		die("エラーメッセージ:{$e->getMessage()}");
+}catch(PDOException $e) {
+	die("エラーメッセージ:{$e->getMessage()}");
 }
-	
-		
-	
+
 ?>
 </body>
 </html>
