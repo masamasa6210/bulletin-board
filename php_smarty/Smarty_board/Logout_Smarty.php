@@ -5,10 +5,10 @@ $errorMessage ="";
 
 
 if (isset($_SESSION["USERID"])) {
-	
+
     $errorMessage = "ログアウトしました。";
 } else {
-    $errorMessage = "セッションがタイムアウトしました。";
+    $errorMessage = "セッションが無効です。";
 }
 $smartyObj->assign('errors', $errorMessage);
 

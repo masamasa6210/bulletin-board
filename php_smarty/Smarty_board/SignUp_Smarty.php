@@ -17,10 +17,10 @@ if (isset($_POST["signUp"])) {
 
 	if (empty($_POST["username"])) {  // 値が空のとき
 		$errorMessage = '名前が未入力です。';
-		
+
 	} else if (empty($_POST["password"])) {
 		$errorMessage = 'パスワードが未入力です。';
-		
+
 	}
 
 	$v = new MyValidator();
@@ -34,20 +34,20 @@ if (isset($_POST["signUp"])) {
 		$username = $_POST["username"];
 		$password = $_POST["password"];
 
-		
 		// //  ユーザIDとパスワードが入力されていたら認証する
 		$dsn = sprintf('mysql: host=%s; dbname=%s; charset=utf8', $db['host'], $db['dbname']);
 		
 		try {
 			$pdo = new PDO($dsn, $db['user'], $db['pass'], array(PDO::ATTR_ERRMODE=>PDO::ERRMODE_EXCEPTION));
-			$stmt = $pdo->prepare("INSERT INTO member(name, password) VALUES(?, ?)");
-				
-			$stmt->execute(array($username, password_hash($password, PASSWORD_DEFAULT)));
+			$stmt = $pdo->prepare("INSERT INTO member(name, password) VALUES(:name, :password)");
+			$stmt->bindParam(':name', $username);
+			$stmt->bindParam(':password', password_hash($password, PASSWORD_DEFAULT));
+			$stmt->execute();
 			$userid = $pdo->lastinsertid();
 
 			 $SignUpMessage = '登録が完了しました。あなたの登録IDは '. $userid. ' です。パスワードは '. $password. ' です。';  // ログイン時に使用するIDとパスワード
-        	} catch (PDOException $e) {
-            $errorMessage = 'データベースエラー';
+			} catch (PDOException $e) {
+				$errorMessage = 'データベースエラー';
 			}
 	}else if($_POST["password"] != $_POST["password2"]) {
 		$errorMessage = 'パスワードに誤りがあります。';

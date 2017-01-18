@@ -30,36 +30,42 @@ if(isset($_POST["login"])){
 		try{
 			$pdo = new PDO($dsn, $db['user'], $db['pass'], array(PDO::ATTR_ERRMODE=>PDO::ERRMODE_EXCEPTION));
 
-			$stmt = $pdo->prepare('SELECT * FROM member WHERE id = ?');
-			$stmt->execute(array($userid));
+			$max = $pdo->query("SELECT MAX(id) FROM member")->fetchColumn();
 
-			$password = $_POST["password"];
+			if($userid <= $max){
+				$stmt = $pdo->prepare('SELECT * FROM member WHERE id = :id');
+				$stmt->bindParam(':id', $userid);
+				$stmt->execute();
 
-			if($row = $stmt->fetch(PDO::FETCH_ASSOC)){
-				if(password_verify($password, $row['password'])) {
-					session_regenerate_id(true);
+				$password = $_POST["password"];
 
-					$sql = "SELECT * FROM member WHERE id = $userid";
-					$stmt = $pdo->query($sql);
-					foreach ($stmt as $row) {
-						$row['id'];
-						$row['name'];
+					if($row = $stmt->fetch(PDO::FETCH_ASSOC)){
+						if(password_verify($password, $row['password'])) {
+							session_regenerate_id(true);
+
+							$sql = "SELECT * FROM member WHERE id = $userid";
+							$stmt = $pdo->query($sql);
+							foreach ($stmt as $row) {
+								$row['id'];
+								$row['name'];
+							}
+							$_SESSION["USERID"] = $row['id'];
+							$_SESSION["NAME"] = $row['name'];
+							header("Location: board_Smarty.php");
+							exit;
+
+						}else{
+							$errorMessage = "ユーザーIDあるいはパスワードに誤りがあります。";
+						}
 					}
-					$_SESSION["USERID"] = $row['id'];
-					$_SESSION["NAME"] = $row['name'];
-					header("Location: board_Smarty.php");
-					exit;
 				}else{
-					$errorMessage = "ユーザーIDあるいはパスワードに誤りがあります。";
-				}
+					$errorMessage = "ユーザーIDが存在しません。";
 			}
-
-				} catch(PDOException $e) {
-					die("エラーメッセージ:{$e->getMessage()}");
-				
-			}
+		} catch(PDOException $e) {
+				die("エラーメッセージ:{$e->getMessage()}");
 		}
 	}
+}
 $smartyObj->assign('errors', $errorMessage);
 $smartyObj->display('Login_Smarty.tpl');
 ?>
